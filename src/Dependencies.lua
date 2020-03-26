@@ -18,6 +18,7 @@ require 'src/constants'
 -- the rectangular entity the player controls, which deflects the ball
 require 'src/Paddle'
 require 'src/Ball'
+require 'src/Brick'
 
 -- utility functions, mainly for splitting sprite into quads
 -- of differing sizes for paddles, balls, bricks, etc.
