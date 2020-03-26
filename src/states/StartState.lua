@@ -27,9 +27,13 @@ function StartState:update(dt)
         gSounds['paddle-hit']:play()
     end
 
-    if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('space') and highlighted == 1 then
-        gSounds['select']:play()
-        gStateMachine:change('play')
+    -- confirm whichever option we have selected to change screens
+    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+        gSounds['confirm']:play()
+
+        if highlighted == 1 then
+            gStateMachine:change('play')
+        end
     end
 
     -- we no longer have this globally, so we include here

@@ -72,6 +72,6 @@ end
     that corresponds to the proper skin and size.
 ]]
 function Paddle:render()
-    love.graphics.draw(gTextures['main'], gFames['paddles'][self.size + 4 * (self.skin - 1)],
+    love.graphics.draw(gTextures['main'], gFrames['paddles'][self.size + 4 * (self.skin - 1)],
         self.x, self.y)
 end
