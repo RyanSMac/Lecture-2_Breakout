@@ -22,6 +22,7 @@ function PlayState:enter(params)
     self.health = params.health
     self.score = params.score
     self.ball = params.ball
+    self.level = params.level
 
     -- give ball random starting velocity
     self.ball.dx = math.random(-200, 200)
@@ -78,6 +79,19 @@ function PlayState:update(dt)
 
             -- trigger brick hit function
             brick:hit()
+
+            -- go to our victory screen if there are no more bricks left
+            if self:checkVictory() then
+                gSounds['victory']:play()
+
+                gStateMachine:change('victory', {
+                    level = self.level,
+                    paddle = self.paddle,
+                    health = self.health,
+                    score = self.score,
+                    ball = self.ball,
+                })
+            end
 
             --
             -- collision code for bricks
@@ -176,4 +190,14 @@ function PlayState:render()
         love.graphics.setFont(gFonts['large'])
         love.graphics.printf("PAUSED", 0, VIRTUAL_HEIGHT / 2 - 16, VIRTUAL_WIDTH, 'center')
     end
+end
+
+function PlayState:checkVictory()
+    for k, brick in pairs(self.bricks) do
+        if brick.inPlay then
+            return false
+        end 
+    end
+
+    return true
 end
