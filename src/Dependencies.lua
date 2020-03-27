@@ -20,6 +20,8 @@ require 'src/Paddle'
 require 'src/Ball'
 require 'src/Brick'
 
+require 'src/LevelMaker'
+
 -- utility functions, mainly for splitting sprite into quads
 -- of differing sizes for paddles, balls, bricks, etc.
 require 'src/Util'

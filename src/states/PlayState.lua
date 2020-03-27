@@ -32,7 +32,7 @@ function PlayState:init()
     self.ball.y = VIRTUAL_HEIGHT - 42
 
     -- use the "static" createMap function to generate a brick map
-    self.bricks = levelMaker.createMap()
+    self.bricks = LevelMaker.createMap()
 end
 
 function PlayState:update(dt)
