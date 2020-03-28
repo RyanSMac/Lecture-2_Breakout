@@ -25,6 +25,8 @@ function PlayState:enter(params)
     self.ball = params.ball
     self.level = params.level
 
+    self.recoverPoints = 5000
+
     -- give ball random starting velocity
     self.ball.dx = math.random(-200, 200)
     self.ball.dy = math.random(-50, -60)
@@ -81,6 +83,18 @@ function PlayState:update(dt)
             -- trigger brick hit function
             brick:hit()
 
+            -- if we have enough points, recover a point of health
+            if self.score > self.recoverPoints then
+                -- can't go above 3 health
+                self.health = math.min(3, self.health + 1)
+
+                -- multiply recover points by 2
+                self.recoverPoints = math.min(100000, self.recoverPoints * 2)
+
+                -- play recover sound effect
+                gSounds['recover']:play()
+            end
+
             -- go to our victory screen if there are no more bricks left
             if self:checkVictory() then
                 gSounds['victory']:play()
@@ -92,6 +106,7 @@ function PlayState:update(dt)
                     score = self.score,
                     highScores = self.highScores,
                     ball = self.ball,
+                    recoverPoints = self.recoverPoints
                 })
             end
 
@@ -133,8 +148,10 @@ function PlayState:update(dt)
                 self.ball.y = brick.y + 16
             end
 
-            -- slightly scale the y velocity to speed up the game
-            self.ball.dy = self.ball.dy * 1.02
+            -- slightly scale the y velocity to speed up the game, capping at +- 150
+            if math.abs(self.ball.dy) < 150 then
+                self.ball.dy = self.ball.dy * 1.02
+            end
 
             -- only allow colliding with one brick, for corners
             break
@@ -158,7 +175,8 @@ function PlayState:update(dt)
                 health = self.health,
                 score = self.score,
                 highScores = self.highScores,
-                level = self.level
+                level = self.level,
+                recoverPoints = self.recoverPoints
 
             })
         end
