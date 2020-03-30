@@ -19,6 +19,8 @@ require 'src/constants'
 require 'src/Paddle'
 require 'src/Ball'
 require 'src/Brick'
+require 'src/PowerUp'
+require 'src/MultiBall'
 
 require 'src/LevelMaker'
 

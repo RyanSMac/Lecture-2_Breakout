@@ -25,12 +25,19 @@ function Ball:init(skin)
 
     -- these variables are for keeping track of our velocity on both the
     -- X and Y axis, since the ball can move in two dimensions
-    self.dy = 0
-    self.dx = 0
+    self.dy = dy
+    self.dx = dx
 
     -- this will effectively be the color of our ball, and we will index
     -- our table of Quads relating to the global block texture using this
     self.skin = skin
+
+    self.remove = false
+
+    self.sx = 1
+    self.sy = 1
+
+    self.size = 2
 end
 
 --[[
@@ -92,5 +99,5 @@ function Ball:render()
     -- gTexture is our global texture for all blocks
     -- gBallFrames is a table of quads mapping to each individual ball skin in the texture
     love.graphics.draw(gTextures['main'], gFrames['balls'][self.skin],
-        self.x, self.y)
+        self.x, self.y, 0, self.sx, self.sy)
 end
