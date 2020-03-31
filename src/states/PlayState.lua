@@ -34,6 +34,12 @@ function PlayState:enter(params)
     self.powerSpawnCount = 0
     self.powerSpawnNum = math.random(10, 15)
 
+    self.timer = 0
+
+    self.keySpawn = 20
+
+    self.lockBrick = false
+
     -- give ball random starting velocity
     for b, ball in pairs(self.balls) do
         ball.dx = math.random(-200, 200)
@@ -42,6 +48,9 @@ function PlayState:enter(params)
 end
 
 function PlayState:update(dt)
+
+    self.timer = self.timer + dt
+
     if self.paused then
         if love.keyboard.wasPressed('space') then
             self.paused = false
@@ -57,6 +66,14 @@ function PlayState:update(dt)
 
     for i, power in pairs(self.powerUp) do
         power:update(dt)
+    end
+
+    if self.lockBrick then
+        if self.timer > self.keySpawn then
+            table.insert(self.powerUp, PowerUp(4, math.random(0, VIRTUAL_WIDTH - 16), 0))
+            self.timer = 0
+            self.keySpawn = math.random(25, 40)
+        end
     end
 
     -- update positions based on velocity
@@ -89,6 +106,10 @@ function PlayState:update(dt)
         -- detect collision across all bricks with the ball
         for k, brick in pairs(self.bricks) do
 
+            if brick.unLocked == 0 and not self.lockBrick then
+                self.lockBrick = true
+            end
+
             -- only check collision if we're in play
             if brick.inPlay and ball:collides(brick) then
 
@@ -112,7 +133,7 @@ function PlayState:update(dt)
                     self.health = math.min(3, self.health + 1)
 
                     -- multiply recover points by 2
-                    self.recoverPoints = self.recoverPoints * 2
+                    self.recoverPoints = self.recoverPoints * 1.3 + 5000
 
                     -- play recover sound effect
                     gSounds['recover']:play()
@@ -199,7 +220,7 @@ function PlayState:update(dt)
             self.paddle.size = self.paddle.size + 1
             self.paddle.width = self.paddle.width + 32
         end
-        self.paddlePoints = self.paddlePoints * 2
+        self.paddlePoints = self.paddlePoints * 1.03 + 2500
     end
 
     if tableEmpty(self.balls) then
@@ -235,7 +256,7 @@ function PlayState:update(dt)
     for i, power in pairs(self.powerUp) do
         if power:collides(self.paddle) then
             -- activate power up
-            ActivatePowerUp(power, self.balls)
+            ActivatePowerUp(power, self.balls, self.bricks)
             -- remove power up from list
             power.remove = true
         end
@@ -295,13 +316,15 @@ function PlayState:checkVictory()
     return true
 end
 
-function ActivatePowerUp(powerUp, balls)
+function ActivatePowerUp(powerUp, balls, bricks)
     if powerUp.type == 3 then
-        table.insert(balls, MultiBall(math.random(7),
-            powerUp.x + 8,
-            powerUp.y + 8,
-            math.random(-50, -60),
-            math.random(-200, 200)))
+        for i = 0, 1 do
+            table.insert(balls, MultiBall(math.random(7),
+                powerUp.x + 8,
+                powerUp.y + 8,
+                math.random(-50, -60),
+                math.random(-200, 200)))
+        end
     elseif powerUp.type == 2 then
         for b, ball in pairs(balls) do
             if ball.size < 3 then
@@ -320,6 +343,13 @@ function ActivatePowerUp(powerUp, balls)
                 ball.sx = ball.sx - 0.5
                 ball.sy = ball.sy - 0.5
                 ball.size = ball.size - 1
+            end
+        end
+    elseif powerUp.type == 4 then
+        for b, brick in pairs(bricks) do
+            if brick.unLocked == 0 then
+                brick.unLocked = 1
+                PlayState.lockBrick = false
             end
         end
     end

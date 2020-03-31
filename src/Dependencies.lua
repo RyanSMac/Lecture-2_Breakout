@@ -21,6 +21,7 @@ require 'src/Ball'
 require 'src/Brick'
 require 'src/PowerUp'
 require 'src/MultiBall'
+require 'src/LockBrick'
 
 require 'src/LevelMaker'
 
